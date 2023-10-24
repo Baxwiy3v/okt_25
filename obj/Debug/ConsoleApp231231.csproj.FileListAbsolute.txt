@@ -1,0 +1,7 @@
+C:\Users\asus\Desktop\ConsoleApp231231\bin\Debug\ConsoleApp231231.exe.config
+C:\Users\asus\Desktop\ConsoleApp231231\bin\Debug\ConsoleApp231231.exe
+C:\Users\asus\Desktop\ConsoleApp231231\bin\Debug\ConsoleApp231231.pdb
+C:\Users\asus\Desktop\ConsoleApp231231\obj\Debug\ConsoleApp231231.csproj.AssemblyReference.cache
+C:\Users\asus\Desktop\ConsoleApp231231\obj\Debug\ConsoleApp231231.csproj.CoreCompileInputs.cache
+C:\Users\asus\Desktop\ConsoleApp231231\obj\Debug\ConsoleApp231231.exe
+C:\Users\asus\Desktop\ConsoleApp231231\obj\Debug\ConsoleApp231231.pdb
