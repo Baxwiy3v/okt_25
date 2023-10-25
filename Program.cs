@@ -1,265 +1,83 @@
-﻿using ConsoleApp231231.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using Newtonsoft.Json;
 
-namespace ConsoleApp231231
+class Program
 {
-    internal class Program
+    private static string jsonFilePath = "namees.json";
+
+    static List<string> LoadData()
     {
-        static List<Quiz> quizzes = new List<Quiz>();
-        
-
-        static void Main()
+        List<string> data;
+        if (File.Exists(jsonFilePath))
         {
-            int choice;
-            do
-            {
-                Console.WriteLine("***Menyu***");
-                Console.WriteLine("1. yeni quiz");
-                Console.WriteLine("2. Solve a quiz");
-                Console.WriteLine("3. Show quizzes");
-                Console.WriteLine("0. Quit");
-                Console.Write("Sechim ed: ");
-
-                if (int.TryParse(Console.ReadLine(), out choice))
-                {
-                    switch (choice)
-                    {
-                        case 1:
-                            CreateNewQuiz();
-                            break;
-                        case 2:
-                            SolveQuiz();
-                            break;
-                        case 3:
-                            ShowQuizzes();
-                            break;
-                        case 0:
-                            Console.WriteLine("Proqramdan cıxılır.");
-                            break;
-                        default:
-                            Console.WriteLine("sehv secim");
-                            break;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("sehv secim.");
-                }
-
-            } while (choice != 0);
+            string json = File.ReadAllText(jsonFilePath);
+            data = JsonConvert.DeserializeObject<List<string>>(json);
         }
-        static void ShowQuizzes()
+        else
         {
-           
-            if (quizzes.Count == 0)
-            {
-
-                Console.WriteLine(" hecbir quiz mövcud deyil.");
-                
-            }
-            else
-            {
-                Console.WriteLine("Movcud Quizlər:");
-                for (int i = 0; i < quizzes.Count; i++)
-                {
-                    Console.WriteLine($"{i + 1}. {quizzes[i].Name}");
-                }
-            }
+            data = new List<string>();
         }
+        return data;
+    }
 
+   
+
+    static void Add(string name)
+    {
+        List<string> data = LoadData();
+        data.Add(name);
+        SaveData(data);
+    }
+
+    static void SaveData(List<string> data)
+    {
+        string json = JsonConvert.SerializeObject(data);
+        File.WriteAllText(jsonFilePath, json);
+    }
+
+    static void Delete(string name)
+    {
+        List<string> data = LoadData();
+        data.Remove(name);
+        SaveData(data);
+    }
+    static bool Search(string name, Predicate<string> match)
+    {
+        List<string> data = LoadData();
+        return data.Exists(match);
+    }
+
+    static void Main()
+    {
        
+        Add("Aqil");
+        Add("Tural");
 
+        Console.WriteLine("Search for 'Aqil': " + Search("Aqil", s => s == "Aqil")); // True
+        Console.WriteLine("Search for 'Vaqif': " + Search("Vaqif", s => s == "Vaqif")); // False
 
+        Delete("Tural");
 
-        static void CreateNewQuiz()
+        Console.WriteLine("Search for 'Tural' after deleting: " + Search("Tural", s => s == "Tural")); // False
+
+        // Örnek bir liste oluşturuyoruz
+        List<string> namesList = new List<string>
         {
-            Console.Write("Quizin adını daxil edin: ");
-            string quizName = Console.ReadLine();
+            "Alice",
+            "Bob",
+            "Charlie",
+            "David"
+        };
 
-            Console.Write("Quizdə neçə sual olmalıdır: ");
-            if (int.TryParse(Console.ReadLine(), out int numberOfQuestions))
-            {
-                List<Question> questions = new List<Question>();
+        // JSON dosyasına yazmak için dosya adı
+        string jsonFilePath = "names.json";
 
-                for (int i = 1; i <= numberOfQuestions; i++)
-                {
-                    Console.WriteLine($"Sual {i} üçün məlumatları daxil edin:");
-                    Console.Write("Sualın mətni: ");
-                    string questionText = Console.ReadLine();
+        // Listeyi JSON formatında serileştirip dosyaya yazıyoruz
+        string json = JsonConvert.SerializeObject(namesList, Formatting.Indented);
+        File.WriteAllText(jsonFilePath, json);
 
-                    List<string> answerOptions = new List<string>();
-                    Console.Write("Variantları daxil edin (növbəti variantı daxil etmək üçün Enter düyməsinə basın): ");
-                    string answerOption;
-                   
-
-                    Console.Write("Doğru variantın indeksini seçin (0 ilə başlayaraq): ");
-                    if (int.TryParse(Console.ReadLine(), out int correctAnswerIndex) && correctAnswerIndex >= 0 && correctAnswerIndex < answerOptions.Count)
-                    {
-                        questions.Add(new Question(questionText, answerOptions, correctAnswerIndex));
-                    }
-                    else
-                    {
-                        Console.WriteLine("sehv indeks. Sual əlavə edilmədi.");
-                    }
-                }
-
-                Quiz newQuiz = new Quiz(quizName, questions);
-                quizzes.Add(newQuiz);
-
-                Console.WriteLine("Quiz uğurla əlavə edildi.");
-            }
-            else
-            {
-                Console.WriteLine("Yanlış rəqəm. Quiz yaradılmadı.");
-            }
-
-        }
-
-
-
-        private static void SolveQuiz()
-        {
-            if (quizzes.Count == 0)
-            {
-                Console.WriteLine("Hazırda heçbir quiz mövcud deyil.");
-                return;
-            }
-
-            Console.WriteLine("Siz hansı quizi həll etmək istəyirsiniz?");
-            ShowQuizzes();
-
-            int quizId;
-            if (int.TryParse(Console.ReadLine(), out quizId) && quizId >= 1 && quizId <= quizzes.Count)
-            {
-                Quiz selectedQuiz = quizzes[quizId - 1];
-                int correctAnswers = 0;
-
-                Console.WriteLine($"\"{selectedQuiz.Name}\" quizi başladı.");
-                for (int i = 0; i < selectedQuiz.Questions.Count; i++)
-                {
-                    Console.WriteLine($"Sual {i + 1}: {selectedQuiz.Questions[i].Text}");
-                    for (int j = 0; j < selectedQuiz.Questions[i].AnswerOptions.Count; j++)
-                    {
-                        Console.WriteLine($"{j}. {selectedQuiz.Questions[i].AnswerOptions[j]}");
-                    }
-                    Console.Write("Cavabınızı seçin (variantın nömrəsini qeyd edin): ");
-                    if (int.TryParse(Console.ReadLine(), out int userAnswer) && userAnswer == selectedQuiz.Questions[i].CorrectAnswerIndex)
-                    {
-                        Console.WriteLine("Düzgün cavab!");
-                        correctAnswers++;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Səhv cavab.");
-                    }
-                }
-
-                Console.WriteLine($"Düzgün cavabladığınız sualların sayı: {correctAnswers}/{selectedQuiz.Questions.Count}");
-            }
-            else
-            {
-                Console.WriteLine("sehv quiz ID..");
-            }
-        }
-
-       
+        Console.WriteLine("names.json oluşturuldu ve veriler dosyaya yazıldı.");
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Quiz Console App yazırsınız.
-
-//Menyunun elementləri 
-
-//1. Create new quiz
-//2.Solve a quiz
-//3. Show quizzes
-//0. Quit
-
-//Create quiz-ə daxil olduqda
-
-//1. Quizin adını yazmağımızı istəyir
-//2. Tərkibində neçə sual olacağını qeyd etməyimizi istəyir
-//3. Sualları daxil edirik:
-//    a.Sualın mətnini daxil edirik
-//    b. variantları daxil edirik
-//    c. doğru variantı qeyd edirik
-
-//    `Show quizzes` daxil olduqda, yaradılan bütün quizlərin `Id` və `Name`-ni ekrana çıxarır
-
-//`Solve a quiz` daxil olduqda 
-
-//1. daxil olmaq üçün quizin `Id`sini daxil edirik
-//2. suallar bir-bir ekrana çıxır, biz cavabladıqca növbəti sual ekrana çıxır. Cavab olaraq variantın nömrəsini qeyd edirik
-//3.Hamısını cavabladıqdan sonra ekrana nəticəmiz çıxır. Suallardan neçəsini doğru yazmışıq
-//Hansı classlara ehtiyacınız olacaq, hansı propertilər lazımdır, özünüz düşünün.
-//Tip:
-
-//`Quiz:`
-
-//`int Id`
-
-//`string Name`
-
-//`List<Question> Questions`
-
-//`Question:`
-
-//`int Id`
-
-//`string Text`
-
-//`List<string> Variants`
-
-//`int CorrectVariant`

@@ -5,3 +5,6 @@ C:\Users\asus\Desktop\ConsoleApp231231\obj\Debug\ConsoleApp231231.csproj.Assembl
 C:\Users\asus\Desktop\ConsoleApp231231\obj\Debug\ConsoleApp231231.csproj.CoreCompileInputs.cache
 C:\Users\asus\Desktop\ConsoleApp231231\obj\Debug\ConsoleApp231231.exe
 C:\Users\asus\Desktop\ConsoleApp231231\obj\Debug\ConsoleApp231231.pdb
+C:\Users\asus\Desktop\ConsoleApp231231\bin\Debug\Newtonsoft.Json.dll
+C:\Users\asus\Desktop\ConsoleApp231231\bin\Debug\Newtonsoft.Json.xml
+C:\Users\asus\Desktop\ConsoleApp231231\obj\Debug\ConsoleApp231231.csproj.CopyComplete
